@@ -1,4 +1,4 @@
-package com.linh.web3jsample.ui.theme
+package com.linh.web3jsample.presentation.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
