@@ -1,4 +1,4 @@
-package com.linh.web3jsample.ui.theme
+package com.linh.web3jsample.presentation.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

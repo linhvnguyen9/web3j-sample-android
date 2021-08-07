@@ -1,4 +1,4 @@
-package com.linh.web3jsample;
+package com.linh.web3jsample.data.contract;
 
 import io.reactivex.Flowable;
 import io.reactivex.functions.Function;
