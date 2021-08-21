@@ -77,4 +77,6 @@ dependencies {
 
     //Web3J
     implementation ('org.web3j:core:4.6.0-android')
+
+    implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.69'
 }
