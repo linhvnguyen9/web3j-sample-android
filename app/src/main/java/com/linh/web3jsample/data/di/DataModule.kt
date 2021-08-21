@@ -4,6 +4,7 @@ import com.linh.web3jsample.data.contract.NonFungibleToken4
 import com.linh.web3jsample.data.contract.SmartContractService
 import com.linh.web3jsample.data.repository.SmartContractRepositoryImpl
 import com.linh.web3jsample.domain.repository.SmartContractRepository
+import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 import org.web3j.crypto.Credentials
 import org.web3j.protocol.Web3j
@@ -39,7 +40,7 @@ val dataModule = module {
             })
     }
 
-    factory { SmartContractService(get()) }
+    factory { SmartContractService(androidApplication(), get()) }
 
     factory { SmartContractRepositoryImpl(get()) as SmartContractRepository }
 }
