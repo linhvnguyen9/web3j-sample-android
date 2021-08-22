@@ -1,29 +1,16 @@
 package com.linh.web3jsample
 
 import android.app.Application
-import com.linh.web3jsample.data.di.dataModule
-import com.linh.web3jsample.presentation.di.presentationModule
+import dagger.hilt.android.HiltAndroidApp
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.startKoin
-import org.koin.dsl.module
 import timber.log.Timber
 import java.security.Provider
 import java.security.Security
 
+@HiltAndroidApp
 class Web3JSampleApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-
-        startKoin {
-            androidContext(this@Web3JSampleApplication)
-            val modules = modules(
-                listOf(
-                    dataModule,
-                    presentationModule
-                )
-            )
-        }
 
         Timber.plant(Timber.DebugTree())
 

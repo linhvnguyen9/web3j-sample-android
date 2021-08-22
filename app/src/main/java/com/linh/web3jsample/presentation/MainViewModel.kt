@@ -6,12 +6,15 @@ import androidx.lifecycle.viewModelScope
 import com.linh.web3jsample.domain.entity.Wallet
 import com.linh.web3jsample.domain.usecase.CreateWalletUseCase
 import com.linh.web3jsample.domain.usecase.GetContractAddressUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
-class MainViewModel(
+@HiltViewModel
+class MainViewModel @Inject constructor(
     private val getContractAddressUseCase: GetContractAddressUseCase,
     private val createWalletUseCase: CreateWalletUseCase
 ) : ViewModel() {
