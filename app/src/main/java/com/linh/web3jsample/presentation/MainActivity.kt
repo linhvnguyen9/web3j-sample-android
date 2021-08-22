@@ -13,37 +13,60 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltNavGraphViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.linh.web3jsample.domain.entity.Wallet
+import com.linh.web3jsample.presentation.createwallet.CreateWalletScreen
+import com.linh.web3jsample.presentation.home.HomeScreen
 import com.linh.web3jsample.presentation.theme.Web3JSampleTheme
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel : MainViewModel by viewModels()
 
+    @Inject
+    lateinit var navigationManager: NavigationManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            Web3JSampleTheme {
-                // A surface container using the 'background' color from the theme
-                val contractAddress = viewModel.contractAddress.collectAsState("")
-                val wallet = viewModel.wallet.collectAsState(Wallet("", "", ""))
 
-                Column {
-                    Surface(color = MaterialTheme.colors.background) {
-                        Greeting("Android")
+        setContent {
+            val navController = rememberNavController()
+
+            Web3JSampleTheme {
+                NavHost(
+                    navController,
+                    startDestination = NavigationDirections.createWallet.destination
+                ) {
+                    composable(NavigationDirections.createWallet.destination) {
+                        CreateWalletScreen(
+                            hiltViewModel(
+                                navController.getBackStackEntry(
+                                    NavigationDirections.createWallet.destination
+                                )
+                            )
+                        )
                     }
-                    Text("Contract address: ${contractAddress.value}", color = MaterialTheme.colors.onSurface)
-                    Text("Greeting method result: ${contractAddress.value}", color = MaterialTheme.colors.onSurface)
-                    Text("Wallet address: ${wallet.value.address}", color = MaterialTheme.colors.onSurface)
-                    Text("Wallet mnemonic: ${wallet.value.mnemonic}", color = MaterialTheme.colors.onSurface)
-                    Text("Wallet private key: ${wallet.value.privateKey}", color = MaterialTheme.colors.onSurface)
-                    Button({
-                        val password = "password"
-                        viewModel.createWallet(password)
-                    }) {
-                        Text("Create wallet")
+                    composable(NavigationDirections.home.destination) {
+                        HomeScreen(
+                            hiltViewModel(
+                                navController.getBackStackEntry(
+                                    NavigationDirections.home.destination
+                                )
+                            )
+                        )
                     }
+                }
+
+                navigationManager.commands.collectAsState().value.also { command ->
+                    if (command.destination.isNotEmpty()) navController.navigate(command.destination)
                 }
             }
         }
