@@ -61,11 +61,16 @@ class SmartContractService(private val web3j: Web3j, private val application: Ap
         return smartContract
     }
 
-    private fun getPrivateKey(credentials: Credentials) : String {
+    private fun getPrivateKey(credentials: Credentials): String {
         return credentials.ecKeyPair.privateKey.toString(16)
     }
 
-    private fun getAddress(credentials: Credentials) : String {
+    private fun getAddress(credentials: Credentials): String {
         return credentials.address
     }
+
+    suspend fun getOwnerAddress(tokenId: Long): String =
+        withContext(Dispatchers.IO) {
+            smartContract.ownerOf(BigInteger(tokenId.toString())).send()
+        }
 }

@@ -12,6 +12,10 @@ class SmartContractRepositoryImpl @Inject constructor(val service: SmartContract
         return service.getContractAddress()
     }
 
+    override suspend fun getOwnerAddress(tokenId: Long): String {
+        return service.getOwnerAddress(tokenId)
+    }
+
     override suspend fun createWallet(password: String) : Wallet {
         val createdWallet = service.createWallet(password).toWallet()
 

@@ -4,5 +4,5 @@ import com.linh.web3jsample.domain.entity.Token
 
 interface TokenRepository {
     suspend fun getAllTokenMetadata() : List<Token>
-    fun getTokenMetadata(id: Long)
+    suspend fun getTokenMetadata(id: Long) : Token
 }

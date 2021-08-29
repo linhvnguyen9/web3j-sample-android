@@ -1,6 +1,7 @@
 package com.linh.web3jsample.presentation.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -34,29 +35,39 @@ fun HomeScreen(viewModel: HomeViewModel) {
 
         LazyColumn {
             itemsIndexed(tokens.value) { index: Int, token: Token ->
-                TokenItem(token)
+                TokenItem(token) {
+                    viewModel.onClickToken(token.id)
+                }
             }
         }
     }
 }
 
 @Composable
-fun TokenItem(token: Token) {
+fun TokenItem(token: Token, onClick: () -> Unit) {
     Timber.d("token $token")
-    Card {
+    Card(Modifier.clickable {
+        onClick()
+    }) {
         Column(
             Modifier
                 .padding(8.dp)
                 .fillMaxWidth()
         ) {
-            Box(Modifier.fillMaxWidth().wrapContentHeight()) {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
                 Image(
                     painter = rememberImagePainter(token.imageUrl, builder = {
                         crossfade(true)
                         placeholder(R.drawable.ic_baseline_image_24)
                     }),
                     contentDescription = null,
-                    modifier = Modifier.size(200.dp).align(Alignment.Center)
+                    modifier = Modifier
+                        .size(200.dp)
+                        .align(Alignment.Center)
                 )
             }
             Text(text = token.name, style = MaterialTheme.typography.h6)
@@ -69,5 +80,5 @@ fun TokenItem(token: Token) {
 @Preview
 @Composable
 fun TokenItemPreview() {
-    TokenItem(Token(0, "My first token", "This is the first token", ""))
+    TokenItem(Token(0, "My first token", "This is the first token", "", ""), {})
 }
