@@ -48,29 +48,17 @@ class MainActivity : ComponentActivity() {
                 ) {
                     composable(NavigationDirections.createWallet.destination) {
                         CreateWalletScreen(
-                            hiltViewModel(
-                                navController.getBackStackEntry(
-                                    NavigationDirections.createWallet.destination
-                                )
-                            )
+                            hiltViewModel()
                         )
                     }
                     composable(NavigationDirections.home.destination) {
                         HomeScreen(
-                            hiltViewModel(
-                                navController.getBackStackEntry(
-                                    NavigationDirections.home.destination
-                                )
-                            )
+                            hiltViewModel()
                         )
                     }
                     composable(TokenDetailNavigation.route, TokenDetailNavigation.args) {
                         TokenDetailScreen(
-                            hiltViewModel(
-                                navController.getBackStackEntry(
-                                    TokenDetailNavigation.route
-                                )
-                            ),
+                            hiltViewModel(),
                             it.arguments?.getLong(TokenDetailNavigation.KEY_TOKEN_ID) ?: 0L
                         )
                     }
