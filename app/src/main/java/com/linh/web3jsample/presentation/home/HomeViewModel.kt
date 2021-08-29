@@ -2,8 +2,10 @@ package com.linh.web3jsample.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.linh.web3jsample.domain.entity.Token
 import com.linh.web3jsample.domain.entity.Wallet
 import com.linh.web3jsample.domain.usecase.CreateWalletUseCase
+import com.linh.web3jsample.domain.usecase.GetAllTokensUseCase
 import com.linh.web3jsample.domain.usecase.GetContractAddressUseCase
 import com.linh.web3jsample.domain.usecase.GetWalletUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,11 +17,16 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getContractAddressUseCase: GetContractAddressUseCase,
-    private val getWalletUseCase: GetWalletUseCase
+    private val getWalletUseCase: GetWalletUseCase,
+    private val getAllTokensUseCase: GetAllTokensUseCase
 ) : ViewModel() {
     private val _contractAddress = MutableStateFlow("")
     val contractAddress: StateFlow<String>
         get() = _contractAddress
+
+    private val _tokens = MutableStateFlow(emptyList<Token>())
+    val tokens: StateFlow<List<Token>>
+        get() = _tokens
 
     private val _wallet = MutableStateFlow(Wallet("", "", ""))
     val wallet : StateFlow<Wallet>
@@ -28,14 +35,20 @@ class HomeViewModel @Inject constructor(
     init {
         getWallet()
         getContractAddress()
-    }
-
-    private fun getContractAddress() {
-        val contractAddress = getContractAddressUseCase()
-        _contractAddress.value = contractAddress
+        getAllTokens()
     }
 
     private fun getWallet() {
         _wallet.value = getWalletUseCase()
+    }
+
+    private fun getContractAddress() {
+        _contractAddress.value = getContractAddressUseCase()
+    }
+
+    private fun getAllTokens() {
+        viewModelScope.launch {
+            _tokens.value = getAllTokensUseCase()
+        }
     }
 }
