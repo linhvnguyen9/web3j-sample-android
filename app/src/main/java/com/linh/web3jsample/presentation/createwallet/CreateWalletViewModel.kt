@@ -27,4 +27,8 @@ class CreateWalletViewModel @Inject constructor(
             navigationManager.navigate(NavigationDirections.home)
         }
     }
+
+    fun onClickContinue() {
+        navigationManager.navigate(NavigationDirections.home)
+    }
 }
