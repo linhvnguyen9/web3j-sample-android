@@ -23,6 +23,7 @@ import com.linh.web3jsample.domain.entity.Wallet
 import com.linh.web3jsample.presentation.createwallet.CreateWalletScreen
 import com.linh.web3jsample.presentation.home.HomeScreen
 import com.linh.web3jsample.presentation.theme.Web3JSampleTheme
+import com.linh.web3jsample.presentation.tokendetail.TokenDetailScreen
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -61,6 +62,16 @@ class MainActivity : ComponentActivity() {
                                     NavigationDirections.home.destination
                                 )
                             )
+                        )
+                    }
+                    composable(TokenDetailNavigation.route, TokenDetailNavigation.args) {
+                        TokenDetailScreen(
+                            hiltViewModel(
+                                navController.getBackStackEntry(
+                                    TokenDetailNavigation.route
+                                )
+                            ),
+                            it.arguments?.getLong(TokenDetailNavigation.KEY_TOKEN_ID) ?: 0L
                         )
                     }
                 }

@@ -10,7 +10,7 @@ class TokenRepositoryImpl @Inject constructor(private val tokenMetadataService: 
         return tokenMetadataService.getAllTokensMetadata().map { it.toModel() }
     }
 
-    override fun getTokenMetadata(id: Long) {
-        TODO("Not yet implemented")
+    override suspend fun getTokenMetadata(id: Long) : Token {
+        return tokenMetadataService.getTokenMetadata(id).toModel()
     }
 }

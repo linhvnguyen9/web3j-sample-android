@@ -10,5 +10,5 @@ data class TokenResponse(
     @SerializedName("image")
     val imageUrl: String?,
 ) {
-    fun toModel() = Token(id ?: 0L, name ?: "", description ?: "", imageUrl ?: "")
+    fun toModel() = Token(id ?: 0L, name ?: "", description ?: "", imageUrl ?: "", "")
 }
