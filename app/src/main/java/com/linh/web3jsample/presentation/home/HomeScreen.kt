@@ -11,11 +11,8 @@ import com.linh.web3jsample.domain.entity.Wallet
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
     Column {
-        val contractAddress = viewModel.contractAddress.collectAsState("")
         val wallet = viewModel.wallet.collectAsState(Wallet("", "", ""))
 
-        Text("Contract address: ${contractAddress.value}", color = MaterialTheme.colors.onSurface)
-        Text("Greeting method result: ${contractAddress.value}", color = MaterialTheme.colors.onSurface)
         Text("Wallet address: ${wallet.value.address}", color = MaterialTheme.colors.onSurface)
         Text("Wallet mnemonic: ${wallet.value.mnemonic}", color = MaterialTheme.colors.onSurface)
         Text("Wallet private key: ${wallet.value.privateKey}", color = MaterialTheme.colors.onSurface)

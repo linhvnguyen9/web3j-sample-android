@@ -18,5 +18,11 @@ fun CreateWalletScreen(
         }) {
             Text("Create wallet")
         }
+
+        Button({
+            viewModel.onClickContinue()
+        }) {
+            Text("Continue")
+        }
     }
 }
