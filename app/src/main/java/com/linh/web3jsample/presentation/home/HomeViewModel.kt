@@ -20,38 +20,19 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getContractAddressUseCase: GetContractAddressUseCase,
-    private val getWalletUseCase: GetWalletUseCase,
     private val getAllTokensUseCase: GetAllTokensUseCase,
     private val navigationManager: NavigationManager
 ) : ViewModel() {
-    private val _contractAddress = MutableStateFlow("")
-    val contractAddress: StateFlow<String>
-        get() = _contractAddress
-
     private val _tokens = MutableStateFlow(emptyList<Token>())
     val tokens: StateFlow<List<Token>>
         get() = _tokens
 
-    private val _wallet = MutableStateFlow(Wallet("", "", ""))
-    val wallet : StateFlow<Wallet>
-        get() = _wallet
-
     init {
-        getWallet()
-        getContractAddress()
         getAllTokens()
     }
 
     fun onClickToken(tokenId: Long) {
         navigationManager.navigate(TokenDetailNavigation.detail(tokenId))
-    }
-
-    private fun getWallet() {
-        _wallet.value = getWalletUseCase()
-    }
-
-    private fun getContractAddress() {
-        _contractAddress.value = getContractAddressUseCase()
     }
 
     private fun getAllTokens() {

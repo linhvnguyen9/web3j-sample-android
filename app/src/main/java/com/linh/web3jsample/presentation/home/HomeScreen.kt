@@ -22,17 +22,6 @@ import timber.log.Timber
 fun HomeScreen(viewModel: HomeViewModel) {
     val tokens = viewModel.tokens.collectAsState()
     Column {
-        val wallet = viewModel.wallet.collectAsState(Wallet("", "", ""))
-
-        Text("Wallet address: ${wallet.value.address}", color = MaterialTheme.colors.onSurface)
-        Text("Wallet mnemonic: ${wallet.value.mnemonic}", color = MaterialTheme.colors.onSurface)
-        Text(
-            "Wallet private key: ${wallet.value.privateKey}",
-            color = MaterialTheme.colors.onSurface
-        )
-
-        Spacer(Modifier.height(32.dp))
-
         LazyColumn {
             itemsIndexed(tokens.value) { index: Int, token: Token ->
                 TokenItem(token) {

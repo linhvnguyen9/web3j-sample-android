@@ -4,7 +4,6 @@ import com.linh.web3jsample.data.contract.SmartContractService
 import com.linh.web3jsample.data.local.EncryptedSharedPreference
 import com.linh.web3jsample.domain.entity.Wallet
 import com.linh.web3jsample.domain.repository.SmartContractRepository
-import com.orhanobut.hawk.Hawk
 import javax.inject.Inject
 
 class SmartContractRepositoryImpl @Inject constructor(val service: SmartContractService) : SmartContractRepository {
@@ -27,6 +26,11 @@ class SmartContractRepositoryImpl @Inject constructor(val service: SmartContract
         }
 
         return createdWallet
+    }
+
+    override suspend fun getEthBalance(): Long {
+        val wallet = getWallet()
+        return service.getEthBalance(wallet.address)
     }
 
     override fun getWallet(): Wallet {

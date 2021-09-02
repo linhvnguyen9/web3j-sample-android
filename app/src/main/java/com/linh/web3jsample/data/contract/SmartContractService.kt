@@ -6,6 +6,7 @@ import kotlinx.coroutines.withContext
 import org.web3j.crypto.Credentials
 import org.web3j.crypto.WalletUtils
 import org.web3j.protocol.Web3j
+import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.tx.gas.ContractGasProvider
 import timber.log.Timber
@@ -73,4 +74,11 @@ class SmartContractService(private val web3j: Web3j, private val application: Ap
         withContext(Dispatchers.IO) {
             smartContract.ownerOf(BigInteger(tokenId.toString())).send()
         }
+
+    suspend fun getEthBalance(address: String): Long = withContext(Dispatchers.IO) {
+        return@withContext web3j.ethGetBalance(address, DefaultBlockParameterName.LATEST)
+            .send()
+            .balance
+            .toLong()
+    }
 }

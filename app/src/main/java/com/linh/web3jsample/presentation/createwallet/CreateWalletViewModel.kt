@@ -24,11 +24,11 @@ class CreateWalletViewModel @Inject constructor(
     fun createWallet(password: String) {
         viewModelScope.launch {
             _wallet.value = createWalletUseCase(password)
-            navigationManager.navigate(NavigationDirections.home)
+            navigationManager.navigate(NavigationDirections.main)
         }
     }
 
     fun onClickContinue() {
-        navigationManager.navigate(NavigationDirections.home)
+        navigationManager.navigate(NavigationDirections.main)
     }
 }

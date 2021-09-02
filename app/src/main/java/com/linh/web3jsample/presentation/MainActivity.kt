@@ -22,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import com.linh.web3jsample.domain.entity.Wallet
 import com.linh.web3jsample.presentation.createwallet.CreateWalletScreen
 import com.linh.web3jsample.presentation.home.HomeScreen
+import com.linh.web3jsample.presentation.main.MainScreen
 import com.linh.web3jsample.presentation.theme.Web3JSampleTheme
 import com.linh.web3jsample.presentation.tokendetail.TokenDetailScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,21 +52,15 @@ class MainActivity : ComponentActivity() {
                             hiltViewModel()
                         )
                     }
-                    composable(NavigationDirections.home.destination) {
-                        HomeScreen(
-                            hiltViewModel()
-                        )
-                    }
-                    composable(TokenDetailNavigation.route, TokenDetailNavigation.args) {
-                        TokenDetailScreen(
-                            hiltViewModel(),
-                            it.arguments?.getLong(TokenDetailNavigation.KEY_TOKEN_ID) ?: 0L
-                        )
+                    composable(NavigationDirections.main.destination) {
+                        MainScreen(navigationManager, hiltViewModel())
                     }
                 }
 
                 navigationManager.commands.collectAsState().value.also { command ->
-                    if (command.destination.isNotEmpty()) navController.navigate(command.destination)
+                    if (command.destination.isNotEmpty() && !command.isBottomNavigationItem) {
+                        navController.navigate(command.destination)
+                    }
                 }
             }
         }
