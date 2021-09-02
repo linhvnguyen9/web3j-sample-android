@@ -75,10 +75,20 @@ class SmartContractService(private val web3j: Web3j, private val application: Ap
             smartContract.ownerOf(BigInteger(tokenId.toString())).send()
         }
 
-    suspend fun getEthBalance(address: String): Long = withContext(Dispatchers.IO) {
+    suspend fun getEthBalance(address: String): String = withContext(Dispatchers.IO) {
         return@withContext web3j.ethGetBalance(address, DefaultBlockParameterName.LATEST)
             .send()
             .balance
-            .toLong()
+            .convertToBalanceString()
+    }
+
+    private fun BigInteger.convertToBalanceString() : String {
+        val integerPart = this.divide(ETH_DECIMALS)
+        val fractionalPart = this.mod(ETH_DECIMALS)
+        return "$integerPart.$fractionalPart"
+    }
+
+    companion object {
+        private val ETH_DECIMALS = BigInteger("1000000000000000000")
     }
 }

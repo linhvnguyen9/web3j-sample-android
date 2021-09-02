@@ -28,7 +28,7 @@ class SmartContractRepositoryImpl @Inject constructor(val service: SmartContract
         return createdWallet
     }
 
-    override suspend fun getEthBalance(): Long {
+    override suspend fun getEthBalance(): String {
         val wallet = getWallet()
         return service.getEthBalance(wallet.address)
     }

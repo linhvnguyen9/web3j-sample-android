@@ -16,8 +16,8 @@ class WalletViewModel @Inject constructor(
     private val getEthBalanceUseCase: GetEthBalanceUseCase,
     private val getWalletUseCase: GetWalletUseCase,
 ) : ViewModel() {
-    private val _ethBalance = MutableStateFlow(0L)
-    val ethBalance : StateFlow<Long> get() = _ethBalance
+    private val _ethBalance = MutableStateFlow("")
+    val ethBalance : StateFlow<String> get() = _ethBalance
 
     private val _wallet = MutableStateFlow(Wallet("", "", ""))
     val wallet : StateFlow<Wallet>

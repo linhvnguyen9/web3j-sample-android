@@ -8,7 +8,7 @@ object EncryptedSharedPreference {
     }
 
     fun getWalletAddress(): String {
-        return Hawk.get<String>(KEY_WALLET_ADDRESS)
+        return Hawk.get(KEY_WALLET_ADDRESS)
     }
 
     fun saveWalletPrivateKey(privateKey: String) {
@@ -16,7 +16,7 @@ object EncryptedSharedPreference {
     }
 
     fun getWalletPrivateKey(): String {
-        return Hawk.get<String>(KEY_WALLET_PRIVATE_KEY)
+        return Hawk.get(KEY_WALLET_PRIVATE_KEY)
     }
 
     fun saveWalletPassword(password: String) {
