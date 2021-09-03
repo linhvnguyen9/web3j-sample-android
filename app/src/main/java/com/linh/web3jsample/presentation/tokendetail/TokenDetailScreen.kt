@@ -16,8 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.linh.web3jsample.R
-import com.linh.web3jsample.domain.entity.Token
-import com.linh.web3jsample.presentation.home.TokenItem
 
 @Composable
 fun TokenDetailScreen(tokenDetailViewModel: TokenDetailViewModel, tokenId: Long) {

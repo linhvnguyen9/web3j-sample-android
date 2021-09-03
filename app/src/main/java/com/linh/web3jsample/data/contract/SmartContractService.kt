@@ -82,14 +82,28 @@ class SmartContractService(private val web3j: Web3j, private val application: Ap
             .convertToBalanceString()
     }
 
-    private fun BigInteger.convertToBalanceString() : String {
+    suspend fun getBalanceOf(address: String): Long = withContext(Dispatchers.IO) {
+        val balance = smartContract.balanceOf(address).send()
+        return@withContext balance.toLong()
+    }
+
+    suspend fun getTokenOfOwnerByIndex(owner: String, index: Long): Long =
+        withContext(Dispatchers.IO) {
+            return@withContext smartContract.tokenOfOwnerByIndex(
+                owner,
+                BigInteger(index.toString())
+            ).send().toLong()
+        }
+
+    private fun BigInteger.convertToBalanceString(): String {
         val integerPart = this.divide(ETH_DECIMALS)
         val fractionalPart = this.mod(ETH_DECIMALS)
         return "$integerPart.$fractionalPart"
     }
 
     companion object {
-        private const val ERC721_SMART_CONTRACT_ADDRESS = "0x6aec55c34fcd7f874237becb83e2a2671caa06b9"
+        private const val ERC721_SMART_CONTRACT_ADDRESS =
+            "0x6aec55c34fcd7f874237becb83e2a2671caa06b9"
 
         private val ETH_DECIMALS = BigInteger("1000000000000000000")
     }

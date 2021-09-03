@@ -16,58 +16,15 @@ import coil.compose.rememberImagePainter
 import com.linh.web3jsample.R
 import com.linh.web3jsample.domain.entity.Token
 import com.linh.web3jsample.domain.entity.Wallet
+import com.linh.web3jsample.presentation.common.TokensList
 import timber.log.Timber
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
     val tokens = viewModel.tokens.collectAsState()
     Column {
-        LazyColumn {
-            itemsIndexed(tokens.value) { index: Int, token: Token ->
-                TokenItem(token) {
-                    viewModel.onClickToken(token.id)
-                }
-            }
-        }
+        TokensList(tokens.value, onClick = { tokenId ->
+            viewModel.onClickToken(tokenId)
+        })
     }
-}
-
-@Composable
-fun TokenItem(token: Token, onClick: () -> Unit) {
-    Timber.d("token $token")
-    Card(Modifier.clickable {
-        onClick()
-    }) {
-        Column(
-            Modifier
-                .padding(8.dp)
-                .fillMaxWidth()
-        ) {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-            ) {
-                Image(
-                    painter = rememberImagePainter(token.imageUrl, builder = {
-                        crossfade(true)
-                        placeholder(R.drawable.ic_baseline_image_24)
-                    }),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(200.dp)
-                        .align(Alignment.Center)
-                )
-            }
-            Text(text = token.name, style = MaterialTheme.typography.h6)
-            Text(token.description, style = MaterialTheme.typography.body1)
-        }
-    }
-    Spacer(Modifier.height(8.dp))
-}
-
-@Preview
-@Composable
-fun TokenItemPreview() {
-    TokenItem(Token(0, "My first token", "This is the first token", "", ""), {})
 }
