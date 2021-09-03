@@ -78,7 +78,7 @@ object TokenDetailNavigation {
         override val destination: String
             get() = "detail/$tokenId"
 
-        override val isBottomNavigationItem: Boolean = false
+        override val isBottomNavigationItem: Boolean = true
 
         override val screenNameRes: Int
             get() = R.string.app_name

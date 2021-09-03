@@ -40,7 +40,7 @@ class SmartContractService(private val web3j: Web3j, private val application: Ap
     private fun initSmartContract(credentials: Credentials) : NonFungibleToken4 {
         if (!this::smartContract.isInitialized) {
             smartContract = NonFungibleToken4.load(
-                "0x6aec55c34fcd7f874237becb83e2a2671caa06b9", web3j, credentials, object :
+                ERC721_SMART_CONTRACT_ADDRESS, web3j, credentials, object :
                     ContractGasProvider {
                     override fun getGasPrice(contractFunc: String?): BigInteger {
                         return web3j.ethGasPrice().send().gasPrice
@@ -89,6 +89,8 @@ class SmartContractService(private val web3j: Web3j, private val application: Ap
     }
 
     companion object {
+        private const val ERC721_SMART_CONTRACT_ADDRESS = "0x6aec55c34fcd7f874237becb83e2a2671caa06b9"
+
         private val ETH_DECIMALS = BigInteger("1000000000000000000")
     }
 }
