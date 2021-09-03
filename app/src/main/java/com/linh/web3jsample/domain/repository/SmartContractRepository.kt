@@ -7,5 +7,7 @@ interface SmartContractRepository {
     suspend fun createWallet(password: String) : Wallet
     suspend fun getOwnerAddress(tokenId: Long) : String
     suspend fun getEthBalance(): String
+    suspend fun getBalanceOf(address: String): Long
+    suspend fun getOwnedTokenIdByAddress(address: String): List<Long>
     fun getWallet() : Wallet
 }

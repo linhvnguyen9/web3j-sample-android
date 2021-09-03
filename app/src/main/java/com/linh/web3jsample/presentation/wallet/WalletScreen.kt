@@ -28,6 +28,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.linh.web3jsample.domain.entity.Token
+import com.linh.web3jsample.presentation.common.TokensList
 
 
 @Composable
@@ -36,12 +38,13 @@ fun WalletScreen(
 ) {
     val ethBalance = viewModel.ethBalance.collectAsState()
     val wallet = viewModel.wallet.collectAsState(Wallet("", "", ""))
+    val ownedTokens = viewModel.ownedTokens.collectAsState(emptyList())
     val context = LocalContext.current
 
     Column(
         Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+//            .verticalScroll(rememberScrollState())
     ) {
         Text("ETH balance ${ethBalance.value}", color = MaterialTheme.colors.onSurface)
         WalletAddress(wallet.value.address)
@@ -52,6 +55,9 @@ fun WalletScreen(
         )
         Text("My NFTs", Modifier.clickable {
 
+        })
+        TokensList(ownedTokens.value, onClick = {
+            viewModel.onClickOwnedToken(it)
         })
     }
 }
