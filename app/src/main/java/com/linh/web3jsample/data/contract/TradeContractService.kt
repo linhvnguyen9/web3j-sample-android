@@ -49,7 +49,7 @@ class TradeContractService(private val web3j: Web3j, private val application: Ap
 
     companion object {
         const val TRADE_CONTRACT_ADDRESS =
-            "0xa25280B7DaAA988d0B6E779D91b6e36729d4fFff"
+            "0xa25280b7daaa988d0b6e779d91b6e36729d4ffff"
 
         private val ETH_DECIMALS = BigInteger("1000000000000000000")
     }

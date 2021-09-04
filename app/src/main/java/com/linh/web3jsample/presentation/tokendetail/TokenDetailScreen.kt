@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -46,8 +47,17 @@ fun TokenDetailScreen(tokenDetailViewModel: TokenDetailViewModel, tokenId: Long)
                     .align(Alignment.Center)
             )
         }
-        Text(text = token.value.name, style = MaterialTheme.typography.h6, color = MaterialTheme.colors.onSurface)
-        Text(token.value.description, style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onSurface)
-        Text("Owner: ${token.value.tokenOwnerAddress}", style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onSurface)
+
+        token.value.run {
+            Text(text = name, style = MaterialTheme.typography.h6, color = MaterialTheme.colors.onSurface)
+            Text(description, style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onSurface)
+            Text("Owner: $tokenOwnerAddress", style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onSurface)
+            Text("Is trade approved $isTradeApproved", style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onSurface)
+            Button(onClick = {
+                tokenDetailViewModel.approveForTrade()
+            }) {
+                Text(text = "Approve!")
+            }
+        }
     }
 }

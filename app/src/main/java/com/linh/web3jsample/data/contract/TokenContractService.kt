@@ -97,7 +97,7 @@ class TokenContractService(private val web3j: Web3j, private val application: Ap
 
     suspend fun approve(to: String, tokenId: Long) {
         withContext(Dispatchers.IO) {
-            return@withContext smartContract.approve(to, BigInteger(tokenId.toString()))
+            return@withContext smartContract.approve(to, BigInteger(tokenId.toString())).send()
         }
     }
 
@@ -108,7 +108,9 @@ class TokenContractService(private val web3j: Web3j, private val application: Ap
     }
 
     suspend fun getApprovedAddress(tokenId: Long): String = withContext(Dispatchers.IO) {
-        return@withContext smartContract.getApproved(tokenId.toBigInteger()).send()
+        val approvedAddress = smartContract.getApproved(tokenId.toBigInteger()).send()
+        Timber.d("getApprovedAddress $approvedAddress")
+        return@withContext approvedAddress
     }
 
     companion object {
