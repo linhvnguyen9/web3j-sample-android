@@ -12,32 +12,32 @@ import org.web3j.tx.gas.ContractGasProvider
 import timber.log.Timber
 import java.math.BigInteger
 
-class SmartContractService(private val web3j: Web3j, private val application: Application) {
-    private lateinit var smartContract : NonFungibleToken4
+class TokenContractService(private val web3j: Web3j, private val application: Application) {
+    private lateinit var smartContract: NonFungibleToken4
 
-    init {
-        Timber.d("Smart contract service initialized")
-    }
-
-    fun getContractAddress() : String {
+    fun getContractAddress(): String {
         return smartContract.contractAddress
     }
 
     /*
     @returns String is wallet address
      */
-    suspend fun createWallet(password: String) : LoadWalletResponse = withContext(Dispatchers.IO) {
+    suspend fun createWallet(password: String): LoadWalletResponse = withContext(Dispatchers.IO) {
         val wallet = WalletUtils.generateBip39Wallet(password, application.filesDir)
         return@withContext loadWallet(password, wallet.mnemonic)
     }
 
-    fun loadWallet(password: String, mnemonic: String) : LoadWalletResponse {
-        val credential = WalletUtils.loadBip39Credentials(password, mnemonic)
+    fun getCredentials(password: String, mnemonic: String): Credentials {
+        return WalletUtils.loadBip39Credentials(password, mnemonic)
+    }
+
+    fun loadWallet(password: String, mnemonic: String): LoadWalletResponse {
+        val credential = getCredentials(password, mnemonic)
         initSmartContract(credential)
         return LoadWalletResponse(mnemonic, getPrivateKey(credential), getAddress(credential))
     }
 
-    private fun initSmartContract(credentials: Credentials) : NonFungibleToken4 {
+    private fun initSmartContract(credentials: Credentials): NonFungibleToken4 {
         if (!this::smartContract.isInitialized) {
             smartContract = NonFungibleToken4.load(
                 ERC721_SMART_CONTRACT_ADDRESS, web3j, credentials, object :
@@ -95,10 +95,20 @@ class SmartContractService(private val web3j: Web3j, private val application: Ap
             ).send().toLong()
         }
 
+    suspend fun approve(to: String, tokenId: Long) {
+        withContext(Dispatchers.IO) {
+            return@withContext smartContract.approve(to, BigInteger(tokenId.toString()))
+        }
+    }
+
     private fun BigInteger.convertToBalanceString(): String {
         val integerPart = this.divide(ETH_DECIMALS)
         val fractionalPart = this.mod(ETH_DECIMALS)
         return "$integerPart.$fractionalPart"
+    }
+
+    suspend fun getApprovedAddress(tokenId: Long): String = withContext(Dispatchers.IO) {
+        return@withContext smartContract.getApproved(tokenId.toBigInteger()).send()
     }
 
     companion object {

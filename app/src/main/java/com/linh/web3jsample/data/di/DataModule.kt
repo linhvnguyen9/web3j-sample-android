@@ -1,9 +1,9 @@
 package com.linh.web3jsample.data.di
 
 import android.app.Application
-import com.linh.web3jsample.data.contract.NonFungibleToken4
-import com.linh.web3jsample.data.contract.SmartContractService
+import com.linh.web3jsample.data.contract.TokenContractService
 import com.linh.web3jsample.data.contract.TokenMetadataService
+import com.linh.web3jsample.data.contract.TradeContractService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,8 +34,14 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideSmartContractService(web3j: Web3j, application: Application): SmartContractService {
-        return SmartContractService(web3j, application)
+    fun provideTokenContractService(web3j: Web3j, application: Application): TokenContractService {
+        return TokenContractService(web3j, application)
+    }
+
+    @Singleton
+    @Provides
+    fun provideTradeContractService(web3j: Web3j, application: Application): TradeContractService {
+        return TradeContractService(web3j, application)
     }
 
     @Singleton
