@@ -5,5 +5,6 @@ data class Token(
     val name: String,
     val description: String,
     val imageUrl: String,
-    val tokenOwnerAddress: String
+    val tokenOwnerAddress: String,
+    val isTradeApproved: Boolean = false
 )

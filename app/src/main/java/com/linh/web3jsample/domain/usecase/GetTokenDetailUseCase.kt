@@ -11,10 +11,11 @@ class GetTokenDetailUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(tokenId: Long): Token {
         val ownerAddress = smartContractRepository.getOwnerAddress(tokenId)
+        val isApprovedForTrade = smartContractRepository.getApprovalForTrade(tokenId)
         val tokenMetadata = tokenRepository.getTokenMetadata(tokenId)
 
         return tokenMetadata.run {
-            Token(id, name, description, imageUrl, ownerAddress)
+            Token(id, name, description, imageUrl, ownerAddress, isApprovedForTrade)
         }
     }
 }
