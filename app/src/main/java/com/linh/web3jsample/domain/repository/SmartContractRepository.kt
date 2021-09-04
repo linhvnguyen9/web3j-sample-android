@@ -9,5 +9,7 @@ interface SmartContractRepository {
     suspend fun getEthBalance(): String
     suspend fun getBalanceOf(address: String): Long
     suspend fun getOwnedTokenIdByAddress(address: String): List<Long>
+    suspend fun approveForTrade(tokenId: Long)
+    suspend fun getApprovalForTrade(tokenId: Long): Boolean
     fun getWallet() : Wallet
 }

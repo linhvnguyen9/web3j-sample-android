@@ -1,6 +1,5 @@
 package com.linh.web3jsample.data.di
 
-import com.linh.web3jsample.data.contract.SmartContractService
 import com.linh.web3jsample.data.repository.SmartContractRepositoryImpl
 import com.linh.web3jsample.data.repository.TokenRepositoryImpl
 import com.linh.web3jsample.domain.repository.SmartContractRepository
