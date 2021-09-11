@@ -114,22 +114,6 @@ class TokenContractService(private val web3j: Web3j, private val application: Ap
         return@withContext approvedAddress
     }
 
-//    private suspend fun estimateGas(remoteFunctionCall: RemoteFunctionCall<*>) : String =
-//        withContext(Dispatchers.IO) {
-//            val rawFunctionCall = remoteFunctionCall.encodeFunctionCall()
-//            return@withContext web3j.ethEstimateGas(
-//                Transaction.createFunctionCallTransaction(
-//                    "0xea2e620978275819a7461d4cb3cfb625c570d589",
-//                    BigInteger.ONE,
-//                    web3j.ethGasPrice().send().gasPrice,
-//                    web3j.ethGetBlockByNumber(DefaultBlockParameterName.LATEST, false)
-//                        .send().block.gasLimit,
-//                    ERC721_SMART_CONTRACT_ADDRESS,
-//                    rawFunctionCall
-//                )
-//            ).send().amountUsed.toString()
-//        }
-
     private fun BigInteger.convertToBalanceString(): String {
         val integerPart = this.divide(ETH_DECIMALS)
         val fractionalPart = this.mod(ETH_DECIMALS)

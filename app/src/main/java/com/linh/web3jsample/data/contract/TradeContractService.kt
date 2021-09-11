@@ -23,8 +23,9 @@ class TradeContractService(private val web3j: Web3j, private val application: Ap
     suspend fun getTradeByItemId(itemId: Long): Trade =
         withContext(Dispatchers.IO) {
             try {
-                return@withContext smartContract.getTradeByItem(BigInteger(itemId.toString())).send().run {
-                    Trade(poster, item.toLong(), price.toString(), status.toString())
+                return@withContext smartContract.getTradeByItem(BigInteger(itemId.toString()))
+                    .send().run {
+                    Trade(poster, item.toLong(), price.toString(), status.decodeToString())
                 }
             } catch (e: ContractCallException) {
                 Timber.d("getTradeByItemId exception loc message ${e.localizedMessage} cause message${e.cause?.message}")
@@ -32,7 +33,26 @@ class TradeContractService(private val web3j: Web3j, private val application: Ap
             }
         }
 
-    fun initSmartContract(credentials: Credentials) : Classifieds {
+    suspend fun openTrade(tokenId: Long, priceInEth: String) {
+        withContext(Dispatchers.IO) {
+            try {
+                return@withContext smartContract.openTrade(
+                    tokenId.toBigInteger(), priceInEth.toBigInteger()).send()
+            } catch (e: ContractCallException) {
+                Timber.e("Open trade error ${e.localizedMessage}")
+            }
+        }
+    }
+
+    suspend fun estimateGasOpenTrade(tokenId: Long, priceInEth: String): String =
+        withContext(Dispatchers.IO) {
+            return@withContext smartContract.estimateGasOpenTrade(
+                tokenId.toBigInteger(),
+                priceInEth.toBigInteger()
+            ).send().amountUsed.toString(10)
+        }
+
+    fun initSmartContract(credentials: Credentials): Classifieds {
         if (!this::smartContract.isInitialized) {
             smartContract = Classifieds.load(
                 TRADE_CONTRACT_ADDRESS, web3j, credentials, object :

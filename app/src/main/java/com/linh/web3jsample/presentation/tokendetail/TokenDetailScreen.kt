@@ -5,13 +5,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import coil.compose.rememberImagePainter
 import com.linh.web3jsample.R
 import com.linh.web3jsample.domain.entity.Trade
@@ -23,6 +27,8 @@ fun TokenDetailScreen(tokenDetailViewModel: TokenDetailViewModel, tokenId: Long)
     val token = tokenDetailViewModel.tokenDetail.collectAsState()
     val trade = tokenDetailViewModel.trade.collectAsState()
     val transaction = tokenDetailViewModel.transaction.collectAsState()
+
+    val tradePrice = tokenDetailViewModel.tradePrice.collectAsState()
 
     LaunchedEffect(tokenId) {
         tokenDetailViewModel.getTokenDetail(tokenId)
@@ -71,6 +77,30 @@ fun TokenDetailScreen(tokenDetailViewModel: TokenDetailViewModel, tokenId: Long)
 
             if (posterAddress.isBlank()) {
                 Text("There are no trade associated with this token.")
+                ConstraintLayout(Modifier.fillMaxWidth()) {
+                    val (input, unit) = createRefs()
+                    TextField(
+                        modifier = Modifier.constrainAs(input) {
+                            start.linkTo(parent.start)
+                            top.linkTo(parent.top)
+                            end.linkTo(unit.start, 8.dp)
+                            width = Dimension.fillToConstraints
+                        },
+                        value = tradePrice.value,
+                        onValueChange = {
+                            tokenDetailViewModel.tradePrice.value = it
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        placeholder = {
+                            Text(text = "Enter amount to list")
+                        }
+                    )
+                    Text("wei", Modifier.wrapContentWidth().constrainAs(unit) {
+                        end.linkTo(parent.end)
+                        top.linkTo(input.top)
+                        bottom.linkTo(input.bottom)
+                    })
+                }
                 Button(onClick = {
                     tokenDetailViewModel.onClickCreateTrade()
                 }) {
@@ -93,9 +123,13 @@ fun TokenDetailScreen(tokenDetailViewModel: TokenDetailViewModel, tokenId: Long)
     transaction.value?.let {
         val transactionName = when (it.transaction) {
             Transaction.APPROVE_FOR_TRADE -> "Approve for trade"
+            Transaction.CREATE_TRADE -> "Create trade"
         }
         ConfirmTransactionDialog(transactionName, it.gasPrice, onConfirm = {
-            tokenDetailViewModel.confirmApproveForTrade()
+            when (it.transaction) {
+                Transaction.APPROVE_FOR_TRADE -> tokenDetailViewModel.confirmApproveForTrade()
+                Transaction.CREATE_TRADE -> tokenDetailViewModel.confirmCreateTrade()
+            }
         }) {
             tokenDetailViewModel.resetTransaction()
         }
