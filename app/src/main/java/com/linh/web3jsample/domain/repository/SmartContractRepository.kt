@@ -1,5 +1,6 @@
 package com.linh.web3jsample.domain.repository
 
+import com.linh.web3jsample.domain.entity.Trade
 import com.linh.web3jsample.domain.entity.Wallet
 
 interface SmartContractRepository {
@@ -10,6 +11,8 @@ interface SmartContractRepository {
     suspend fun getBalanceOf(address: String): Long
     suspend fun getOwnedTokenIdByAddress(address: String): List<Long>
     suspend fun approveForTrade(tokenId: Long)
+    suspend fun estimateGasApproveForTrade(tokenId: Long): String
     suspend fun getApprovalForTrade(tokenId: Long): Boolean
+    suspend fun getTradeForToken(tokenId: Long): Trade
     fun getWallet() : Wallet
 }

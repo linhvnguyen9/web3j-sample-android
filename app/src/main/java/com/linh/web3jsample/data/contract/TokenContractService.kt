@@ -8,6 +8,8 @@ import org.web3j.crypto.WalletUtils
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.DefaultBlockParameterName
+import org.web3j.protocol.core.RemoteFunctionCall
+import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.tx.gas.ContractGasProvider
 import timber.log.Timber
 import java.math.BigInteger
@@ -95,22 +97,43 @@ class TokenContractService(private val web3j: Web3j, private val application: Ap
             ).send().toLong()
         }
 
+    suspend fun estimateGasApprove(to: String, tokenId: Long): String =
+        withContext(Dispatchers.IO) {
+            return@withContext smartContract.estimateGasApprove(to, tokenId.toBigInteger()).send().amountUsed.toString(10)
+        }
+
     suspend fun approve(to: String, tokenId: Long) {
         withContext(Dispatchers.IO) {
-            return@withContext smartContract.approve(to, BigInteger(tokenId.toString())).send()
+            return@withContext smartContract.approve(to, tokenId.toBigInteger()).send()
         }
-    }
-
-    private fun BigInteger.convertToBalanceString(): String {
-        val integerPart = this.divide(ETH_DECIMALS)
-        val fractionalPart = this.mod(ETH_DECIMALS)
-        return "$integerPart.$fractionalPart"
     }
 
     suspend fun getApprovedAddress(tokenId: Long): String = withContext(Dispatchers.IO) {
         val approvedAddress = smartContract.getApproved(tokenId.toBigInteger()).send()
         Timber.d("getApprovedAddress $approvedAddress")
         return@withContext approvedAddress
+    }
+
+//    private suspend fun estimateGas(remoteFunctionCall: RemoteFunctionCall<*>) : String =
+//        withContext(Dispatchers.IO) {
+//            val rawFunctionCall = remoteFunctionCall.encodeFunctionCall()
+//            return@withContext web3j.ethEstimateGas(
+//                Transaction.createFunctionCallTransaction(
+//                    "0xea2e620978275819a7461d4cb3cfb625c570d589",
+//                    BigInteger.ONE,
+//                    web3j.ethGasPrice().send().gasPrice,
+//                    web3j.ethGetBlockByNumber(DefaultBlockParameterName.LATEST, false)
+//                        .send().block.gasLimit,
+//                    ERC721_SMART_CONTRACT_ADDRESS,
+//                    rawFunctionCall
+//                )
+//            ).send().amountUsed.toString()
+//        }
+
+    private fun BigInteger.convertToBalanceString(): String {
+        val integerPart = this.divide(ETH_DECIMALS)
+        val fractionalPart = this.mod(ETH_DECIMALS)
+        return "$integerPart.$fractionalPart"
     }
 
     companion object {

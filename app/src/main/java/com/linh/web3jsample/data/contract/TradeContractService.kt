@@ -3,10 +3,14 @@ package com.linh.web3jsample.data.contract
 import android.app.Application
 import com.linh.web3jsample.data.contract.TradeContractService.Companion.TRADE_CONTRACT_ADDRESS
 import com.linh.web3jsample.domain.entity.Trade
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.web3j.crypto.Credentials
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
+import org.web3j.tx.exceptions.ContractCallException
 import org.web3j.tx.gas.ContractGasProvider
+import timber.log.Timber
 import java.math.BigInteger
 
 class TradeContractService(private val web3j: Web3j, private val application: Application) {
@@ -16,11 +20,17 @@ class TradeContractService(private val web3j: Web3j, private val application: Ap
         return smartContract.contractAddress
     }
 
-    fun getTradeByItemId(itemId: Long): Trade {
-        return smartContract.getTradeByItem(BigInteger(itemId.toString())).send().run {
-            Trade(poster, item.toLong(), price.toString(), status.toString())
+    suspend fun getTradeByItemId(itemId: Long): Trade =
+        withContext(Dispatchers.IO) {
+            try {
+                return@withContext smartContract.getTradeByItem(BigInteger(itemId.toString())).send().run {
+                    Trade(poster, item.toLong(), price.toString(), status.toString())
+                }
+            } catch (e: ContractCallException) {
+                Timber.d("getTradeByItemId exception loc message ${e.localizedMessage} cause message${e.cause?.message}")
+                return@withContext Trade("", 0L, "", "")
+            }
         }
-    }
 
     fun initSmartContract(credentials: Credentials) : Classifieds {
         if (!this::smartContract.isInitialized) {
