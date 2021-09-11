@@ -3,6 +3,7 @@ package com.linh.web3jsample.data.repository
 import com.linh.web3jsample.data.contract.TokenContractService
 import com.linh.web3jsample.data.contract.TradeContractService
 import com.linh.web3jsample.data.local.EncryptedSharedPreference
+import com.linh.web3jsample.domain.entity.Trade
 import com.linh.web3jsample.domain.entity.Wallet
 import com.linh.web3jsample.domain.repository.SmartContractRepository
 import javax.inject.Inject
@@ -55,8 +56,16 @@ class SmartContractRepositoryImpl @Inject constructor(
         tokenContractService.approve(TradeContractService.TRADE_CONTRACT_ADDRESS, tokenId)
     }
 
+    override suspend fun estimateGasApproveForTrade(tokenId: Long): String {
+        return tokenContractService.estimateGasApprove(TradeContractService.TRADE_CONTRACT_ADDRESS, tokenId)
+    }
+
     override suspend fun getApprovalForTrade(tokenId: Long): Boolean {
         return tokenContractService.getApprovedAddress(tokenId) == TradeContractService.TRADE_CONTRACT_ADDRESS
+    }
+
+    override suspend fun getTradeForToken(tokenId: Long) : Trade {
+        return tradeContractService.getTradeByItemId(tokenId)
     }
 
     override fun getWallet(): Wallet {

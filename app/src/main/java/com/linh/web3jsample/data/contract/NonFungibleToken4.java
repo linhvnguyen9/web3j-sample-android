@@ -22,8 +22,11 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.RemoteCall;
 import org.web3j.protocol.core.RemoteFunctionCall;
+import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.methods.request.EthFilter;
+import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.BaseEventResponse;
+import org.web3j.protocol.core.methods.response.EthEstimateGas;
 import org.web3j.protocol.core.methods.response.Log;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.Contract;
@@ -333,11 +336,22 @@ public class NonFungibleToken4 extends Contract {
         return unpausedEventFlowable(filter);
     }
 
+    public Request<?, EthEstimateGas> estimateGasApprove(String to, BigInteger tokenId) {
+        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
+                FUNC_APPROVE,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, to),
+                        new org.web3j.abi.datatypes.generated.Uint256(tokenId)),
+                Collections.<TypeReference<?>>emptyList());
+
+        return web3j.ethEstimateGas(
+                Transaction.createFunctionCallTransaction(transactionManager.getFromAddress(), new BigInteger("1"), gasProvider.getGasPrice(FUNC_APPROVE), gasProvider.getGasLimit(FUNC_APPROVE), contractAddress, executeRemoteCallTransaction(function).encodeFunctionCall()));
+    }
+
     public RemoteFunctionCall<TransactionReceipt> approve(String to, BigInteger tokenId) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
-                FUNC_APPROVE, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, to), 
-                new org.web3j.abi.datatypes.generated.Uint256(tokenId)), 
+                FUNC_APPROVE,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, to),
+                        new org.web3j.abi.datatypes.generated.Uint256(tokenId)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
