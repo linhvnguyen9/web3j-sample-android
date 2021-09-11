@@ -22,8 +22,11 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.RemoteCall;
 import org.web3j.protocol.core.RemoteFunctionCall;
+import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.methods.request.EthFilter;
+import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.BaseEventResponse;
+import org.web3j.protocol.core.methods.response.EthEstimateGas;
 import org.web3j.protocol.core.methods.response.Log;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tuples.generated.Tuple4;
@@ -154,16 +157,27 @@ public class Classifieds extends Contract {
 
     public RemoteFunctionCall<TransactionReceipt> openTrade(BigInteger _item, BigInteger _price) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
-                FUNC_OPENTRADE, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(_item), 
-                new org.web3j.abi.datatypes.generated.Uint256(_price)), 
+                FUNC_OPENTRADE,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(_item),
+                new org.web3j.abi.datatypes.generated.Uint256(_price)),
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
+    public Request<?, EthEstimateGas> estimateGasOpenTrade(BigInteger _item, BigInteger _price) {
+        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
+                FUNC_OPENTRADE,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(_item),
+                        new org.web3j.abi.datatypes.generated.Uint256(_price)),
+                Collections.<TypeReference<?>>emptyList());
+
+        return web3j.ethEstimateGas(
+                Transaction.createFunctionCallTransaction(transactionManager.getFromAddress(), BigInteger.ONE, gasProvider.getGasPrice(FUNC_OPENTRADE), gasProvider.getGasLimit(FUNC_OPENTRADE), contractAddress, executeRemoteCallTransaction(function).encodeFunctionCall()));
+    }
+
     public RemoteFunctionCall<Tuple4<String, BigInteger, BigInteger, byte[]>> trades(BigInteger param0) {
-        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_TRADES, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)), 
+        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_TRADES,
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)),
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}, new TypeReference<Uint256>() {}, new TypeReference<Uint256>() {}, new TypeReference<Bytes32>() {}));
         return new RemoteFunctionCall<Tuple4<String, BigInteger, BigInteger, byte[]>>(function,
                 new Callable<Tuple4<String, BigInteger, BigInteger, byte[]>>() {

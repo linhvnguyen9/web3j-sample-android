@@ -4,10 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.linh.web3jsample.domain.entity.Token
 import com.linh.web3jsample.domain.entity.Trade
-import com.linh.web3jsample.domain.usecase.ApproveForTradeUseCase
-import com.linh.web3jsample.domain.usecase.GetApproveForTradeGasUseCase
-import com.linh.web3jsample.domain.usecase.GetTokenDetailUseCase
-import com.linh.web3jsample.domain.usecase.GetTradeForTokenUseCase
+import com.linh.web3jsample.domain.usecase.*
 import com.linh.web3jsample.presentation.NavigationManager
 import com.linh.web3jsample.presentation.entity.Transaction
 import com.linh.web3jsample.presentation.entity.TransactionDialogInfo
@@ -22,7 +19,9 @@ class TokenDetailViewModel @Inject constructor(
     private val getTokenDetailUseCase: GetTokenDetailUseCase,
     private val approveForTradeUseCase: ApproveForTradeUseCase,
     private val getTradeForTokenUseCase: GetTradeForTokenUseCase,
-    private val getApproveForTradeGasUseCase: GetApproveForTradeGasUseCase
+    private val getApproveForTradeGasUseCase: GetApproveForTradeGasUseCase,
+    private val getOpenTradeGasUseCase: GetOpenTradeGasUseCase,
+    private val openTradeUseCase: OpenTradeUseCase
 ) : ViewModel() {
     private val _tokenDetail = MutableStateFlow(Token(0L, "", "", "", ""))
     val tokenDetail: StateFlow<Token> get() = _tokenDetail
@@ -32,6 +31,8 @@ class TokenDetailViewModel @Inject constructor(
 
     private val _transaction = MutableStateFlow<TransactionDialogInfo?>(null)
     val transaction: StateFlow<TransactionDialogInfo?> get() = _transaction
+
+    val tradePrice = MutableStateFlow("")
 
     fun getTokenDetail(tokenId: Long) {
         viewModelScope.launch {
@@ -55,7 +56,17 @@ class TokenDetailViewModel @Inject constructor(
     }
 
     fun onClickCreateTrade() {
+        viewModelScope.launch {
+            val gas = getOpenTradeGasUseCase(tokenDetail.value.id, tradePrice.value)
+            _transaction.value = TransactionDialogInfo(Transaction.CREATE_TRADE, gas)
+        }
+    }
 
+    fun confirmCreateTrade() {
+        viewModelScope.launch {
+            resetTransaction()
+            openTradeUseCase(tokenDetail.value.id, tradePrice.value)
+        }
     }
 
     fun resetTransaction() {
