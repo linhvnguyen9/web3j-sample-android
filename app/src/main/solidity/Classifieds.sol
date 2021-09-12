@@ -107,12 +107,12 @@ contract Classifieds {
         emit TradeStatusChange(_trade, "Cancelled");
     }
 
-    function getTradeByItem(uint256 _item) public view returns (Trade memory) {
+    function getTradeByItem(uint256 _item) public view returns (uint256, Trade memory) {
         uint256 counter;
         for (counter = 0; counter < tradeCounter; counter++) {
             Trade memory currentTrade = trades[counter];
             if (currentTrade.item == _item) {
-                return currentTrade;
+                return (counter, currentTrade);
             }
         }
         revert("Item not listed");
