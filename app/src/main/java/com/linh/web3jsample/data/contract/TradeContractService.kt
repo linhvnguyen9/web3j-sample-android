@@ -8,28 +8,27 @@ import kotlinx.coroutines.withContext
 import org.web3j.crypto.Credentials
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
+import org.web3j.tuples.generated.Tuple2
 import org.web3j.tx.exceptions.ContractCallException
 import org.web3j.tx.gas.ContractGasProvider
 import timber.log.Timber
 import java.math.BigInteger
+import java.nio.charset.StandardCharsets
 
-class TradeContractService(private val web3j: Web3j, private val application: Application) {
-    private lateinit var smartContract : Classifieds
-
-    fun getContractAddress() : String {
-        return smartContract.contractAddress
-    }
+class TradeContractService(private val web3j: Web3j, private val contractGasProvider: ContractGasProvider) {
+    private lateinit var smartContract : ClassifiedsExtension
 
     suspend fun getTradeByItemId(itemId: Long): Trade =
         withContext(Dispatchers.IO) {
             try {
                 return@withContext smartContract.getTradeByItem(BigInteger(itemId.toString()))
                     .send().run {
-                    Trade(poster, item.toLong(), price.toString(), status.decodeToString())
+                        val trade = component2()
+                    Trade(component1().toLong(), trade.poster, trade.item.toLong(), trade.price.toString(10), trade.status.decodeToString())
                 }
             } catch (e: ContractCallException) {
                 Timber.d("getTradeByItemId exception loc message ${e.localizedMessage} cause message${e.cause?.message}")
-                return@withContext Trade("", 0L, "", "")
+                return@withContext Trade(0, "", 0L, "", "")
             }
         }
 
@@ -52,34 +51,34 @@ class TradeContractService(private val web3j: Web3j, private val application: Ap
             ).send().amountUsed.toString(10)
         }
 
+    suspend fun executeTrade(tradeId: Long) {
+        withContext(Dispatchers.IO) {
+            try {
+                return@withContext smartContract.executeTrade(
+                    tradeId.toBigInteger()).send()
+            } catch (e: ContractCallException) {
+                Timber.e("Execute trade error ${e.localizedMessage}")
+            }
+        }
+    }
+
+    suspend fun estimateGasExecuteTrade(tradeId: Long): String =
+        withContext(Dispatchers.IO) {
+            return@withContext smartContract.estimateGasExecuteTrade(
+                tradeId.toBigInteger(),
+            ).send().amountUsed.toString(10)
+        }
+
     fun initSmartContract(credentials: Credentials): Classifieds {
         if (!this::smartContract.isInitialized) {
-            smartContract = Classifieds.load(
-                TRADE_CONTRACT_ADDRESS, web3j, credentials, object :
-                    ContractGasProvider {
-                    override fun getGasPrice(contractFunc: String?): BigInteger {
-                        return web3j.ethGasPrice().send().gasPrice
-                    }
-
-                    override fun getGasPrice(): BigInteger {
-                        return web3j.ethGasPrice().send().gasPrice
-                    }
-
-                    override fun getGasLimit(contractFunc: String?): BigInteger {
-                        return web3j.ethGetBlockByNumber(DefaultBlockParameterName.LATEST, false).send().block.gasLimit
-                    }
-
-                    override fun getGasLimit(): BigInteger {
-                        return web3j.ethGetBlockByNumber(DefaultBlockParameterName.LATEST, false).send().block.gasLimit
-                    }
-                })
+            smartContract = ClassifiedsExtension(credentials, web3j, contractGasProvider)
         }
         return smartContract
     }
 
     companion object {
         const val TRADE_CONTRACT_ADDRESS =
-            "0xa25280b7daaa988d0b6e779d91b6e36729d4ffff"
+            "0x69f8aeb7597b9f7d890c261045cb0db0c651aabf"
 
         private val ETH_DECIMALS = BigInteger("1000000000000000000")
     }

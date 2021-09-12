@@ -12,9 +12,12 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.web3j.crypto.Credentials
 import org.web3j.protocol.Web3j
+import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.http.HttpService
+import org.web3j.tx.gas.ContractGasProvider
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.math.BigInteger
 import javax.inject.Singleton
 
 @Module
@@ -38,10 +41,36 @@ object DataModule {
         return TokenContractService(web3j, application)
     }
 
+
     @Singleton
     @Provides
-    fun provideTradeContractService(web3j: Web3j, application: Application): TradeContractService {
-        return TradeContractService(web3j, application)
+    fun provideContractGasProvider(web3j: Web3j) : ContractGasProvider {
+        return object :
+            ContractGasProvider {
+            override fun getGasPrice(contractFunc: String?): BigInteger {
+                return web3j.ethGasPrice().send().gasPrice
+            }
+
+            override fun getGasPrice(): BigInteger {
+                return web3j.ethGasPrice().send().gasPrice
+            }
+
+            override fun getGasLimit(contractFunc: String?): BigInteger {
+                return web3j.ethGetBlockByNumber(DefaultBlockParameterName.LATEST, false)
+                    .send().block.gasLimit
+            }
+
+            override fun getGasLimit(): BigInteger {
+                return web3j.ethGetBlockByNumber(DefaultBlockParameterName.LATEST, false)
+                    .send().block.gasLimit
+            }
+        }
+    }
+
+    @Singleton
+    @Provides
+    fun provideTradeContractService(web3j: Web3j, contractGasProvider: ContractGasProvider): TradeContractService {
+        return TradeContractService(web3j, contractGasProvider)
     }
 
     @Singleton

@@ -349,9 +349,9 @@ public class NonFungibleToken4 extends Contract {
 
     public RemoteFunctionCall<TransactionReceipt> approve(String to, BigInteger tokenId) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
-                FUNC_APPROVE,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, to),
-                        new org.web3j.abi.datatypes.generated.Uint256(tokenId)),
+                FUNC_APPROVE, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, to), 
+                new org.web3j.abi.datatypes.generated.Uint256(tokenId)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
