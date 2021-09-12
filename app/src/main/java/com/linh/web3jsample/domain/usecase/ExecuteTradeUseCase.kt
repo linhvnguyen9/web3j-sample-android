@@ -1,4 +1,8 @@
 package com.linh.web3jsample.domain.usecase
 
-class ExecuteTradeUseCase {
+import com.linh.web3jsample.domain.repository.SmartContractRepository
+import javax.inject.Inject
+
+class ExecuteTradeUseCase @Inject constructor(private val repository: SmartContractRepository) {
+    suspend operator fun invoke(tradeId: Long) = repository.executeTrade(tradeId)
 }

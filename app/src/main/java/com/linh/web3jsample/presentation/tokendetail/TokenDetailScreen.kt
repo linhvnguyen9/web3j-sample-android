@@ -112,9 +112,9 @@ fun TokenDetailScreen(tokenDetailViewModel: TokenDetailViewModel, tokenId: Long)
                 Text("Status $status", style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onSurface)
                 Text("", style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onSurface)
                 Button(onClick = {
-                    tokenDetailViewModel.approveForTrade()
+                    tokenDetailViewModel.onClickBuy()
                 }) {
-                    Text(text = "Approve!")
+                    Text(text = "Buy!")
                 }
             }
         }
@@ -124,11 +124,13 @@ fun TokenDetailScreen(tokenDetailViewModel: TokenDetailViewModel, tokenId: Long)
         val transactionName = when (it.transaction) {
             Transaction.APPROVE_FOR_TRADE -> "Approve for trade"
             Transaction.CREATE_TRADE -> "Create trade"
+            Transaction.EXECUTE_TRADE -> "Execute trade"
         }
         ConfirmTransactionDialog(transactionName, it.gasPrice, onConfirm = {
             when (it.transaction) {
                 Transaction.APPROVE_FOR_TRADE -> tokenDetailViewModel.confirmApproveForTrade()
                 Transaction.CREATE_TRADE -> tokenDetailViewModel.confirmCreateTrade()
+                Transaction.EXECUTE_TRADE -> tokenDetailViewModel.confirmExecuteTrade()
             }
         }) {
             tokenDetailViewModel.resetTransaction()

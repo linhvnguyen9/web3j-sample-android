@@ -21,12 +21,14 @@ class TokenDetailViewModel @Inject constructor(
     private val getTradeForTokenUseCase: GetTradeForTokenUseCase,
     private val getApproveForTradeGasUseCase: GetApproveForTradeGasUseCase,
     private val getOpenTradeGasUseCase: GetOpenTradeGasUseCase,
+    private val getExecuteTradeGasUseCase: GetExecuteTradeGasUseCase,
+    private val executeTradeUseCase: ExecuteTradeUseCase,
     private val openTradeUseCase: OpenTradeUseCase
 ) : ViewModel() {
     private val _tokenDetail = MutableStateFlow(Token(0L, "", "", "", ""))
     val tokenDetail: StateFlow<Token> get() = _tokenDetail
 
-    private val _trade = MutableStateFlow(Trade("", 0L, "", ""))
+    private val _trade = MutableStateFlow(Trade(0, "", 0L, "", ""))
     val trade: StateFlow<Trade> get() = _trade
 
     private val _transaction = MutableStateFlow<TransactionDialogInfo?>(null)
@@ -66,6 +68,20 @@ class TokenDetailViewModel @Inject constructor(
         viewModelScope.launch {
             resetTransaction()
             openTradeUseCase(tokenDetail.value.id, tradePrice.value)
+        }
+    }
+
+    fun onClickBuy() {
+        viewModelScope.launch {
+            val gas = getExecuteTradeGasUseCase(_trade.value.id)
+            _transaction.value = TransactionDialogInfo(Transaction.EXECUTE_TRADE, gas, _trade.value.price)
+        }
+    }
+
+    fun confirmExecuteTrade() {
+        viewModelScope.launch {
+            resetTransaction()
+            executeTradeUseCase(_trade.value.id)
         }
     }
 
