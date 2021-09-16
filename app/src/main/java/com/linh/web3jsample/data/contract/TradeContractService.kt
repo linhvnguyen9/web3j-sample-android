@@ -51,6 +51,19 @@ class TradeContractService(private val web3j: Web3j, private val contractGasProv
             ).send().amountUsed.toString(10)
         }
 
+    suspend fun estimateGasCancelTrade(tradeId: Long): String =
+        withContext(Dispatchers.IO) {
+            return@withContext smartContract.estimateGasCancelTrade(
+                tradeId.toBigInteger(),
+            ).send().amountUsed.toString(10)
+        }
+
+    suspend fun cancelTrade(tradeId: Long) {
+        withContext(Dispatchers.IO) {
+            smartContract.cancelTrade(tradeId.toBigInteger()).send()
+        }
+    }
+
     suspend fun executeTrade(tradeId: Long, value: String) {
         withContext(Dispatchers.IO) {
             try {

@@ -1,5 +1,7 @@
 package com.linh.web3jsample.presentation.main
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
@@ -7,6 +9,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -59,25 +62,28 @@ fun MainScreen(navigationManager: NavigationManager, mainScreenViewModel: MainSc
             }
         }
     ) {
-        NavHost(
-            navController,
-            startDestination = NavigationDirections.home.destination
-        ) {
-            composable(NavigationDirections.home.destination) {
-                HomeScreen(
-                    hiltViewModel()
-                )
-            }
-            composable(NavigationDirections.wallet.destination) {
-                WalletScreen(
-                    hiltViewModel()
-                )
-            }
-            composable(TokenDetailNavigation.route, TokenDetailNavigation.args) {
-                TokenDetailScreen(
-                    hiltViewModel(),
-                    it.arguments?.getLong(TokenDetailNavigation.KEY_TOKEN_ID) ?: 0L
-                )
+        innerPadding ->
+        Box(Modifier.padding(innerPadding)) {
+            NavHost(
+                navController,
+                startDestination = NavigationDirections.home.destination
+            ) {
+                composable(NavigationDirections.home.destination) {
+                    HomeScreen(
+                        hiltViewModel()
+                    )
+                }
+                composable(NavigationDirections.wallet.destination) {
+                    WalletScreen(
+                        hiltViewModel()
+                    )
+                }
+                composable(TokenDetailNavigation.route, TokenDetailNavigation.args) {
+                    TokenDetailScreen(
+                        hiltViewModel(),
+                        it.arguments?.getLong(TokenDetailNavigation.KEY_TOKEN_ID) ?: 0L
+                    )
+                }
             }
         }
 
