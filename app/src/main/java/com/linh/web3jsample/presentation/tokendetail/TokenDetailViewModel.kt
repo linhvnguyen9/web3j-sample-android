@@ -73,7 +73,7 @@ class TokenDetailViewModel @Inject constructor(
 
     fun onClickBuy() {
         viewModelScope.launch {
-            val gas = getExecuteTradeGasUseCase(_trade.value.id)
+            val gas = getExecuteTradeGasUseCase(_trade.value.id, _trade.value.price)
             _transaction.value = TransactionDialogInfo(Transaction.EXECUTE_TRADE, gas, _trade.value.price)
         }
     }
@@ -81,7 +81,7 @@ class TokenDetailViewModel @Inject constructor(
     fun confirmExecuteTrade() {
         viewModelScope.launch {
             resetTransaction()
-            executeTradeUseCase(_trade.value.id)
+            executeTradeUseCase(_trade.value.id, _trade.value.price)
         }
     }
 

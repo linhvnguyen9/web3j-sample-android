@@ -44,7 +44,7 @@ class ClassifiedsExtension (credentials: Credentials, web3j: Web3j, contractGasP
         )
     }
 
-    fun estimateGasExecuteTrade(_trade: BigInteger?): Request<*, EthEstimateGas> {
+    fun estimateGasExecuteTrade(_trade: BigInteger?, value: BigInteger): Request<*, EthEstimateGas> {
         val function = Function(
             FUNC_EXECUTETRADE,
             Arrays.asList<Type<*>>(Uint256(_trade)), emptyList()
@@ -57,9 +57,21 @@ class ClassifiedsExtension (credentials: Credentials, web3j: Web3j, contractGasP
                 gasProvider.getGasPrice(FUNC_EXECUTETRADE),
                 gasProvider.getGasLimit(FUNC_EXECUTETRADE),
                 contractAddress,
+                value,
                 executeRemoteCallTransaction(function).encodeFunctionCall()
             )
         )
+    }
+
+    fun executeTrade(
+        _trade: BigInteger?,
+        value: BigInteger?
+    ): RemoteFunctionCall<TransactionReceipt?>? {
+        val function = Function(
+            FUNC_EXECUTETRADE,
+            Arrays.asList<Type<*>>(Uint256(_trade)), emptyList()
+        )
+        return executeRemoteCallTransaction(function, value)
     }
 
     companion object {

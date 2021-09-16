@@ -64,12 +64,12 @@ class SmartContractRepositoryImpl @Inject constructor(
         tradeContractService.openTrade(tokenId, priceInEth)
     }
 
-    override suspend fun executeTrade(tradeId: Long) {
-        tradeContractService.executeTrade(tradeId)
+    override suspend fun executeTrade(tradeId: Long, value: String) {
+        tradeContractService.executeTrade(tradeId, value)
     }
 
-    override suspend fun estimateGasExecuteTrade(tradeId: Long): String {
-        return tradeContractService.estimateGasExecuteTrade(tradeId)
+    override suspend fun estimateGasExecuteTrade(tradeId: Long, value: String): String {
+        return tradeContractService.estimateGasExecuteTrade(tradeId, value)
     }
 
     override suspend fun estimateGasOpenTrade(tokenId: Long, priceInEth: String): String {

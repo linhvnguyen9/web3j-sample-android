@@ -13,8 +13,8 @@ interface SmartContractRepository {
     suspend fun approveForTrade(tokenId: Long)
     suspend fun estimateGasApproveForTrade(tokenId: Long): String
     suspend fun openTrade(tokenId: Long, priceInEth: String)
-    suspend fun executeTrade(tradeId: Long)
-    suspend fun estimateGasExecuteTrade(tradeId: Long): String
+    suspend fun executeTrade(tradeId: Long, value: String)
+    suspend fun estimateGasExecuteTrade(tradeId: Long, value: String): String
     suspend fun estimateGasOpenTrade(tokenId: Long, priceInEth: String): String
     suspend fun getApprovalForTrade(tokenId: Long): Boolean
     suspend fun getTradeForToken(tokenId: Long): Trade

@@ -111,10 +111,12 @@ fun TokenDetailScreen(tokenDetailViewModel: TokenDetailViewModel, tokenId: Long)
                 Text("Price $price", style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onSurface)
                 Text("Status $status", style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onSurface)
                 Text("", style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onSurface)
-                Button(onClick = {
-                    tokenDetailViewModel.onClickBuy()
-                }) {
-                    Text(text = "Buy!")
+                if (!status.contains("Executed")) {
+                    Button(onClick = {
+                        tokenDetailViewModel.onClickBuy()
+                    }) {
+                        Text(text = "Buy!")
+                    }
                 }
             }
         }
