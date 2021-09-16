@@ -118,6 +118,13 @@ fun TokenDetailScreen(tokenDetailViewModel: TokenDetailViewModel, tokenId: Long)
                         Text(text = "Buy!")
                     }
                 }
+                if (status.contains("Open")) {
+                    Button(onClick = {
+                        tokenDetailViewModel.onClickCancel()
+                    }) {
+                        Text(text = "Cancel!")
+                    }
+                }
             }
         }
     }
@@ -127,12 +134,14 @@ fun TokenDetailScreen(tokenDetailViewModel: TokenDetailViewModel, tokenId: Long)
             Transaction.APPROVE_FOR_TRADE -> "Approve for trade"
             Transaction.CREATE_TRADE -> "Create trade"
             Transaction.EXECUTE_TRADE -> "Execute trade"
+            Transaction.CANCEL_TRADE -> "Cancel Trade"
         }
         ConfirmTransactionDialog(transactionName, it.gasPrice, onConfirm = {
             when (it.transaction) {
                 Transaction.APPROVE_FOR_TRADE -> tokenDetailViewModel.confirmApproveForTrade()
                 Transaction.CREATE_TRADE -> tokenDetailViewModel.confirmCreateTrade()
                 Transaction.EXECUTE_TRADE -> tokenDetailViewModel.confirmExecuteTrade()
+                Transaction.CANCEL_TRADE -> tokenDetailViewModel.confirmCancelTrade()
             }
         }) {
             tokenDetailViewModel.resetTransaction()

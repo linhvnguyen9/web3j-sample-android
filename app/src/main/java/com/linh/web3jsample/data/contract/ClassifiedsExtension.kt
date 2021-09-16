@@ -74,6 +74,24 @@ class ClassifiedsExtension (credentials: Credentials, web3j: Web3j, contractGasP
         return executeRemoteCallTransaction(function, value)
     }
 
+    fun estimateGasCancelTrade(_trade: BigInteger): Request<*, EthEstimateGas> {
+        val function = Function(
+            FUNC_CANCELTRADE,
+            Arrays.asList<Type<*>>(Uint256(_trade)), emptyList()
+        )
+
+        return web3j.ethEstimateGas(
+            Transaction.createFunctionCallTransaction(
+                transactionManager.fromAddress,
+                BigInteger("1"),
+                gasProvider.getGasPrice(FUNC_CANCELTRADE),
+                gasProvider.getGasLimit(FUNC_CANCELTRADE),
+                contractAddress,
+                executeRemoteCallTransaction(function).encodeFunctionCall()
+            )
+        )
+    }
+
     companion object {
         const val TRADE_CONTRACT_ADDRESS =
             "0x69f8aeb7597b9f7d890c261045cb0db0c651aabf"

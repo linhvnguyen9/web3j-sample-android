@@ -22,6 +22,8 @@ class TokenDetailViewModel @Inject constructor(
     private val getApproveForTradeGasUseCase: GetApproveForTradeGasUseCase,
     private val getOpenTradeGasUseCase: GetOpenTradeGasUseCase,
     private val getExecuteTradeGasUseCase: GetExecuteTradeGasUseCase,
+    private val getCancelTradeGasUseCase: GetCancelTradeGasUseCase,
+    private val cancelTradeUseCase: CancelTradeUseCase,
     private val executeTradeUseCase: ExecuteTradeUseCase,
     private val openTradeUseCase: OpenTradeUseCase
 ) : ViewModel() {
@@ -78,10 +80,24 @@ class TokenDetailViewModel @Inject constructor(
         }
     }
 
+    fun onClickCancel() {
+        viewModelScope.launch {
+            val gas = getCancelTradeGasUseCase(_trade.value.id)
+            _transaction.value = TransactionDialogInfo(Transaction.CANCEL_TRADE, gas)
+        }
+    }
+
     fun confirmExecuteTrade() {
         viewModelScope.launch {
             resetTransaction()
             executeTradeUseCase(_trade.value.id, _trade.value.price)
+        }
+    }
+
+    fun confirmCancelTrade() {
+        viewModelScope.launch {
+            resetTransaction()
+            cancelTradeUseCase(_trade.value.id)
         }
     }
 

@@ -76,6 +76,14 @@ class SmartContractRepositoryImpl @Inject constructor(
         return tradeContractService.estimateGasOpenTrade(tokenId, priceInEth)
     }
 
+    override suspend fun estimateGasCancelTrade(tradeId: Long): String{
+        return tradeContractService.estimateGasCancelTrade(tradeId)
+    }
+
+    override suspend fun cancelTrade(tradeId: Long) {
+        return tradeContractService.cancelTrade(tradeId)
+    }
+
     override suspend fun getApprovalForTrade(tokenId: Long): Boolean {
         return tokenContractService.getApprovedAddress(tokenId) == TradeContractService.TRADE_CONTRACT_ADDRESS
     }

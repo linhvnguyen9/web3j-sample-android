@@ -5,5 +5,6 @@ data class TransactionDialogInfo(val transaction: Transaction, val gasPrice: Str
 enum class Transaction {
     APPROVE_FOR_TRADE,
     CREATE_TRADE,
-    EXECUTE_TRADE
+    EXECUTE_TRADE,
+    CANCEL_TRADE
 }
