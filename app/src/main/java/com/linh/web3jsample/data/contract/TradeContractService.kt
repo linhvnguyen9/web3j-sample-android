@@ -51,21 +51,24 @@ class TradeContractService(private val web3j: Web3j, private val contractGasProv
             ).send().amountUsed.toString(10)
         }
 
-    suspend fun executeTrade(tradeId: Long) {
+    suspend fun executeTrade(tradeId: Long, value: String) {
         withContext(Dispatchers.IO) {
             try {
                 return@withContext smartContract.executeTrade(
-                    tradeId.toBigInteger()).send()
+                    tradeId.toBigInteger(),
+                    value.toBigInteger()
+                )?.send()
             } catch (e: ContractCallException) {
                 Timber.e("Execute trade error ${e.localizedMessage}")
             }
         }
     }
 
-    suspend fun estimateGasExecuteTrade(tradeId: Long): String =
+    suspend fun estimateGasExecuteTrade(tradeId: Long, value: String): String =
         withContext(Dispatchers.IO) {
             return@withContext smartContract.estimateGasExecuteTrade(
                 tradeId.toBigInteger(),
+                value.toBigInteger()
             ).send().amountUsed.toString(10)
         }
 
