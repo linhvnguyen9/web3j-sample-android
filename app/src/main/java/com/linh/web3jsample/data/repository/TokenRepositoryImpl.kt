@@ -7,8 +7,8 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class TokenRepositoryImpl @Inject constructor(private val tokenMetadataService: TokenMetadataService) : TokenRepository {
-    override suspend fun getAllTokenMetadata(): List<Token> {
-        return tokenMetadataService.getAllTokensMetadata().map { it.toModel() }
+    override suspend fun getAllTokenMetadata(filter: String): List<Token> {
+        return tokenMetadataService.getAllTokensMetadata(filter).map { it.toModel() }
     }
 
     override suspend fun getTokenMetadata(id: Long) : Token {

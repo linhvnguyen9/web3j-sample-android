@@ -7,7 +7,7 @@ import retrofit2.http.Query
 
 interface TokenMetadataService {
     @GET("linhvnguyen9/nft-server-test/nfts/")
-    suspend fun getAllTokensMetadata() : List<TokenResponse>
+    suspend fun getAllTokensMetadata(@Query("q") filter: String) : List<TokenResponse>
 
     @GET("linhvnguyen9/nft-server-test/nfts/{id}")
     suspend fun getTokenMetadata(@Path("id") id: Long) : TokenResponse

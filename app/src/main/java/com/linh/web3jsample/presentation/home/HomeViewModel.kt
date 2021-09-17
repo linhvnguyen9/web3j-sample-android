@@ -12,6 +12,7 @@ import com.linh.web3jsample.presentation.NavigationDirections
 import com.linh.web3jsample.presentation.NavigationManager
 import com.linh.web3jsample.presentation.TokenDetailNavigation
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -27,6 +28,12 @@ class HomeViewModel @Inject constructor(
     val tokens: StateFlow<List<Token>>
         get() = _tokens
 
+    private val _query = MutableStateFlow("")
+    val query: StateFlow<String>
+        get() = _query
+
+    private var job : Job? = null
+
     init {
         getAllTokens()
     }
@@ -35,9 +42,18 @@ class HomeViewModel @Inject constructor(
         navigationManager.navigate(TokenDetailNavigation.detail(tokenId))
     }
 
-    private fun getAllTokens() {
-        viewModelScope.launch {
-            _tokens.value = getAllTokensUseCase()
+    fun setQuery(query: String) {
+        _query.value = query
+    }
+
+    fun getAllTokens() {
+        getAllTokens(query.value)
+    }
+
+    private fun getAllTokens(filter: String) {
+        job?.cancel()
+        job = viewModelScope.launch {
+            _tokens.value = getAllTokensUseCase(filter)
         }
     }
 }
