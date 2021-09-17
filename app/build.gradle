@@ -76,6 +76,9 @@ dependencies {
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0-alpha03"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-beta02"
 
+    //Compose Accompanist
+    implementation "com.google.accompanist:accompanist-placeholder-material:0.18.0"
+
     //Web3J
     implementation ('org.web3j:core:4.8.7-android')
     implementation "ch.qos.logback:logback-core:1.2.3"

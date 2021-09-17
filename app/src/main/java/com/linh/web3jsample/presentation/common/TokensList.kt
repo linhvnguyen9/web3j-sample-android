@@ -11,30 +11,50 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.fade
+import com.google.accompanist.placeholder.material.placeholder
+import com.google.accompanist.placeholder.placeholder
 import com.linh.web3jsample.R
 import com.linh.web3jsample.domain.entity.Token
+import com.linh.web3jsample.utils.extensions.isNull
 import timber.log.Timber
 
 @Composable
 fun TokensList(tokens: List<Token>, onClick: (tokenId: Long) -> Unit) {
     LazyColumn {
-        itemsIndexed(tokens) { index: Int, token: Token ->
-            TokenItem(token) {
-                onClick(token.id)
+        if (tokens.isEmpty()) {
+            val placeholder = listOf<Token?>(null, null, null, null, null, null, null, null)
+            itemsIndexed(placeholder) { index: Int, token: Token? ->
+                TokenItem(token) {
+                }
+            }
+        } else {
+            itemsIndexed(tokens) { index: Int, token: Token ->
+                TokenItem(token) {
+                    onClick(token.id)
+                }
             }
         }
     }
 }
 
 @Composable
-fun TokenItem(token: Token, onClick: () -> Unit) {
-    Timber.d("token $token")
-    Card(Modifier.clickable {
-        onClick()
-    }) {
+fun TokenItem(token: Token?, onClick: () -> Unit) {
+    val placeholderModifier = Modifier.placeholder(
+        token.isNull(),
+        highlight = PlaceholderHighlight.fade()
+    )
+
+    Card(Modifier
+        .clickable {
+            onClick()
+        }
+    ) {
         Column(
             Modifier
                 .padding(8.dp)
@@ -46,7 +66,7 @@ fun TokenItem(token: Token, onClick: () -> Unit) {
                     .wrapContentHeight()
             ) {
                 Image(
-                    painter = rememberImagePainter(token.imageUrl, builder = {
+                    painter = rememberImagePainter(token?.imageUrl, builder = {
                         crossfade(true)
                         placeholder(R.drawable.ic_baseline_image_24)
                     }),
@@ -54,10 +74,21 @@ fun TokenItem(token: Token, onClick: () -> Unit) {
                     modifier = Modifier
                         .size(200.dp)
                         .align(Alignment.Center)
+                        .then(placeholderModifier)
                 )
             }
-            Text(text = token.name, style = MaterialTheme.typography.h6)
-            Text(token.description, style = MaterialTheme.typography.body1)
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = token?.name ?: "",
+                Modifier.fillMaxWidth().then(placeholderModifier),
+                style = MaterialTheme.typography.h6
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                token?.description ?: "",
+                Modifier.fillMaxWidth().then(placeholderModifier),
+                style = MaterialTheme.typography.body1
+            )
         }
     }
     Spacer(Modifier.height(8.dp))
