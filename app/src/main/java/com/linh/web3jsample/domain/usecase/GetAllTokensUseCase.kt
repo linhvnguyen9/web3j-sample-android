@@ -8,5 +8,5 @@ class GetAllTokensUseCase @Inject constructor(
     private val smartContractRepository: SmartContractRepository,
     private val tokenRepository: TokenRepository
 ) {
-    suspend operator fun invoke() = tokenRepository.getAllTokenMetadata()
+    suspend operator fun invoke(filter: String) = tokenRepository.getAllTokenMetadata(filter)
 }
