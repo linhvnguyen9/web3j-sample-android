@@ -16,16 +16,19 @@ import androidx.compose.ui.semantics.SemanticsProperties.ImeAction
 import androidx.compose.ui.text.input.ImeAction.Companion.Search
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberImagePainter
 import com.linh.web3jsample.R
 import com.linh.web3jsample.domain.entity.Token
 import com.linh.web3jsample.domain.entity.Wallet
 import com.linh.web3jsample.presentation.common.TokensList
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import timber.log.Timber
 
+@ExperimentalCoroutinesApi
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
-    val tokens = viewModel.tokens.collectAsState()
+    val tokens = viewModel.tokens.collectAsLazyPagingItems()
     val query = viewModel.query.collectAsState()
 
     Column {
@@ -34,15 +37,10 @@ fun HomeScreen(viewModel: HomeViewModel) {
             onValueChange = { viewModel.setQuery(it) },
             label = { Text("Search tokens") },
             keyboardOptions = KeyboardOptions(imeAction = Search),
-            keyboardActions = KeyboardActions(
-                onSearch = {
-                    viewModel.getAllTokens()
-                }
-            ),
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(16.dp))
-        TokensList(tokens.value, onClick = { tokenId ->
+        TokensList(tokens, onClick = { tokenId ->
             viewModel.onClickToken(tokenId)
         })
     }
