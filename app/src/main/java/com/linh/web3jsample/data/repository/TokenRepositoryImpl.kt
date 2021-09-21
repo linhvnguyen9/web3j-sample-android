@@ -1,14 +1,24 @@
 package com.linh.web3jsample.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.linh.web3jsample.data.contract.TokenMetadataService
+import com.linh.web3jsample.data.contract.TokensPagingSource
 import com.linh.web3jsample.domain.entity.Token
 import com.linh.web3jsample.domain.repository.TokenRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import javax.inject.Inject
 
 class TokenRepositoryImpl @Inject constructor(private val tokenMetadataService: TokenMetadataService) : TokenRepository {
-    override suspend fun getAllTokenMetadata(filter: String): List<Token> {
-        return tokenMetadataService.getAllTokensMetadata(filter).map { it.toModel() }
+    override fun getAllTokenMetadata(filter: String): Flow<PagingData<Token>> {
+        Timber.d("getAllTokenMetadata filter $filter")
+        return Pager(PagingConfig(pageSize = TokensPagingSource.PAGE_SIZE, enablePlaceholders = true)) {
+            TokensPagingSource(filter, tokenMetadataService)
+        }.flow
     }
 
     override suspend fun getTokenMetadata(id: Long) : Token {
